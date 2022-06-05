@@ -1,4 +1,5 @@
 ﻿using Kata_Services.Commands.AddMessageToTimeline;
+using Kata_Services.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,4 +31,16 @@ public class MessagesController : ControllerBase
             ? StatusCode(StatusCodes.Status201Created, result)
             : StatusCode(StatusCodes.Status500InternalServerError, "Unable to add a new post");
     }
+
+    [HttpGet]
+    [Route("timeline/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetAllMessagesByUserViewModel>))]
+    public async Task<IEnumerable<GetAllMessagesByUserViewModel>> GetAllMessagesFromUserTimeline(int id)
+    {
+        return await _mediator.Send(new GetAllMessagesByUserQuery
+        {
+            UserId = id
+        });
+    }
+    
 }
