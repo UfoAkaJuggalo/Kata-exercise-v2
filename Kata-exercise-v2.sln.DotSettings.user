@@ -1,14 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Ufo\AppData\Local\JetBrains\Rider2022.1\resharper-host\temp\Rider\vAny\CoverageData\_Kata-exercise-v2.-347365424\Snapshot\snapshot.utdcvr</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=11f18221_002Dfcbf_002D4496_002D9ff0_002D59f4b10b5bbb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="NewUserAdded" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Or&gt;&#xD;
-    &lt;TestAncestor&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.CommandsTests.AddUserCommandHandlerTest&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.CommandsTests.AddMessageCommandHandlerTest.DoesNotThrowException&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.CommandsTests.AddMessageCommandHandlerTest.ThrowsException&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.CommandsTests.AddMessageCommandHandlerTest.NewMessageAdded&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.RepositoryTest.UserInMemoryRepositoryTest&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::F2D6CB9A-DF92-441C-81DF-0C089A447F34::net6.0::Unit_Tests_Kata_Services.RepositoryTest.MessageInMemoryRepositoryTest&lt;/TestId&gt;&#xD;
-    &lt;/TestAncestor&gt;&#xD;
-    &lt;Project Location="D:\My Documents\Visual Studio 2022\Projects\Kata-exercise-v2\BechavioralTestsSpecFlow" Presentation="&amp;lt;BechavioralTestsSpecFlow&amp;gt;" /&gt;&#xD;
-  &lt;/Or&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
