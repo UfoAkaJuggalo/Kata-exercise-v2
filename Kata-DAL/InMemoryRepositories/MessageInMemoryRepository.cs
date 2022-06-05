@@ -30,4 +30,7 @@ public class MessageInMemoryRepository : IMessageRepository
 
         return message.MessageId;
     }
+
+    public IEnumerable<Message> GetAllMessagesByUserId(int userId) =>
+        _messages.Where(w => w.AuthorId == userId);
 }
