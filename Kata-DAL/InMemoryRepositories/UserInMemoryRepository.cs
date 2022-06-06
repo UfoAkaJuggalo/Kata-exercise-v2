@@ -23,7 +23,9 @@ public class UserInMemoryRepository : IUserRepository
             DisplayName = displayName,
             LastName = lastName,
             Email = email,
-            Timeline = new List<Message>()
+            Timeline = new List<Message>(),
+            Subscriptions = new List<User>(),
+            Followers = new List<User>()
         };
         
         _users.Add(user);
@@ -34,4 +36,20 @@ public class UserInMemoryRepository : IUserRepository
     public User GetUserById(int userId) =>
         _users.FirstOrDefault(f => f.UserId == userId) ??
         throw new ArgumentOutOfRangeException($"UserId: {userId} is not exist in our system");
+
+    public void SubscribeToUserTimeline(int followerId, int targetId)
+    {
+        try
+        {
+            var follower = GetUserById(followerId);
+            var targetUser = GetUserById(targetId);
+                
+            follower.Subscriptions.Add(targetUser);
+            targetUser.Followers.Add(follower);
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 }
