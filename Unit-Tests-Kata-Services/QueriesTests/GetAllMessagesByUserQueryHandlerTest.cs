@@ -13,7 +13,7 @@ public class GetAllMessagesByUserQueryHandlerTest
 {
     private GetAllMessagesByUserQuery _query;
     private GetAllMessagesByUserQueryHandler _queryHandler;
-    private IMapper _mapper;
+    private IMapper? _mapper;
 
     [SetUp]
     public void Setup()
