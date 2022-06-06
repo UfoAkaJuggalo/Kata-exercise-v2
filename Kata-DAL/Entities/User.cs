@@ -7,5 +7,7 @@ public class User
     public string Email { get; set; }
     public string Name { get; set; }
     public string LastName { get; set; }
-    public List<Message> Timeline { get; set; }
+    public ICollection<Message> Timeline { get; set; }
+    public ICollection<User> Subscriptions { get; set; }
+    public ICollection<User> Followers { get; set; }
 }
