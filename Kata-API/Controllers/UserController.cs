@@ -1,4 +1,5 @@
 ﻿using Kata_Services.Commands.AddUser;
+using Kata_Services.Commands.SubscribeTo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ public class UserController : ControllerBase
     [HttpPost]
     [Route("add")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(int))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    [ProducesErrorResponseType(typeof(string))]
     public async Task<IActionResult> Add(AddUserViewModel model)
     {
         var result = await _mediator.Send(new AddUserCommand
@@ -29,5 +30,26 @@ public class UserController : ControllerBase
         return result > 0
             ? StatusCode(StatusCodes.Status201Created, result)
             : StatusCode(StatusCodes.Status500InternalServerError, "Unable to add a new user");
+    }
+    
+    [HttpPost]
+    [Route("subscribe")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesErrorResponseType(typeof(string))]
+    public async Task<IActionResult> SubscribeTo(SubscribeToViewModel model)
+    {
+        if (model.FollowerId == model.TargetUserId)
+            return StatusCode(StatusCodes.Status500InternalServerError, "You cannot subscribe to yourself");
+        
+        return await _mediator.Send(new SubscribeToCommand
+        {
+            Model = new SubscribeToViewModel
+            {
+                FollowerId = model.FollowerId,
+                TargetUserId = model.TargetUserId
+            }
+        })
+            ? Ok()
+            : StatusCode(StatusCodes.Status500InternalServerError, "Unable to subscribe to a user");
     }
 }
