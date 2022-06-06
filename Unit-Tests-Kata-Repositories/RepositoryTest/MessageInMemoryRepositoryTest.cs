@@ -112,4 +112,101 @@ public class MessageInMemoryRepositoryTest
         Assert.That(result, Has.Exactly(1).Matches<Message>(x => x.Content == "The first message"));
         Assert.That(result, Has.Exactly(1).Matches<Message>(x => x.Content == "The seconf message"));
     }
+        
+    [Test]
+    public void GetFeedDoesntThrowException()
+    {
+        // 1. Arrange
+        _user.Subscriptions = new List<User>();
+        
+        // 2. Act
+
+        // 3. Assert
+        Assert.DoesNotThrow(()=>_messageRepository.GetSortedByMessageIdFeedForUser(_user));
+    }
+    
+    [Test]
+    public void GetFeedFromTwoUsersIsNotNullOrEmpty()
+    {
+        // 1. Arrange
+        var messageIds = GenerateUsersAndMessages();
+        
+        // 2. Act
+        var result = _messageRepository.GetSortedByMessageIdFeedForUser(_user);
+
+        // 3. Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Not.Empty);
+    }
+    
+    [Test]
+    public void GetFeedFromTwoUsersOnly()
+    {
+        // 1. Arrange
+        var messageIds = GenerateUsersAndMessages();
+        var author = new User
+        {
+            Name = "Ian",
+            UserId = 3,
+            DisplayName = "Ian",
+            Timeline = new List<Message>(),
+        };
+        
+        _messageRepository.AddMessage("Ian sample message", author);
+        
+        // 2. Act
+        var result = _messageRepository.GetSortedByMessageIdFeedForUser(_user);
+
+        // 3. Assert
+        Assert.That(result, Has.Exactly(4).Items);
+        Assert.That(result, Has.None.Matches<Message>(m => m.AuthorId == 3));
+    }
+    
+    [Test]
+    public void GetFeedFromTwoUsersIsSorted()
+    {
+        // 1. Arrange
+        var messageIds = GenerateUsersAndMessages();
+        
+        // 2. Act
+        var result = _messageRepository.GetSortedByMessageIdFeedForUser(_user);
+        var firstPost = result.FirstOrDefault();
+        var lastPost = result.LastOrDefault();
+
+        // 3. Assert
+        Assert.That(firstPost.MessageId, Is.EqualTo(messageIds.Last()));
+        Assert.That(lastPost.MessageId, Is.EqualTo(messageIds.First()));
+    }
+
+    private int[] GenerateUsersAndMessages()
+    {
+        _user.Subscriptions = new List<User>();
+        var author1 = new User
+        {
+            Name = "Bob",
+            UserId = 1,
+            DisplayName = "Bob",
+            Timeline = new List<Message>(),
+            Followers = new List<User>{_user}
+        };
+        var author2 = new User
+        {
+            Name = "Charlie",
+            UserId = 2,
+            DisplayName = "Charlie",
+            Timeline = new List<Message>(),
+            Followers = new List<User>{_user}
+        };
+        var messagesIds = new int [4];
+        
+        _user.Subscriptions.Add(author1);
+        _user.Subscriptions.Add(author2);
+        
+        messagesIds[0] = _messageRepository.AddMessage("Bob message 1", author1);
+        messagesIds[1] = _messageRepository.AddMessage("Bob message 2", author1);
+        messagesIds[2] = _messageRepository.AddMessage("Charlie message 1", author2);
+        messagesIds[3] = _messageRepository.AddMessage("Charlie message 2", author2);
+
+        return messagesIds;
+    }
 }

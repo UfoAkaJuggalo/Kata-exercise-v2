@@ -33,4 +33,7 @@ public class MessageInMemoryRepository : IMessageRepository
 
     public IEnumerable<Message> GetAllMessagesByUserId(int userId) =>
         _messages.Where(w => w.AuthorId == userId);
+
+    public IEnumerable<Message> GetSortedByMessageIdFeedForUser(User user) =>
+        _messages.Where(m => user.Subscriptions.Any(a => a.UserId == m.AuthorId)).OrderByDescending(o=>o.MessageId);
 }

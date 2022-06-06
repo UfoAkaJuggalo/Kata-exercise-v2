@@ -1,4 +1,5 @@
-﻿using Kata_DAL.InMemoryRepositories;
+﻿using Kata_DAL.Entities;
+using Kata_DAL.InMemoryRepositories;
 using Kata_DAL.IRepositories;
 using NUnit.Framework;
 
@@ -62,5 +63,34 @@ public class UserInMemoryRepositoryTest
         // 3. Assert
         Assert.That(newUserId, Is.EqualTo(result.UserId));
         Assert.That(displayName, Is.EqualTo(result.DisplayName));
+    }
+    
+    [Test]
+    public void SubscribeToUserTimelineDoesNotThrowsException()
+    {
+        // 1. Arrange
+        // 2. Act
+        
+        // 3. Assert
+        Assert.DoesNotThrow(
+            () => _userRepository.SubscribeToUserTimeline(0, 1));
+    }    
+    [Test]
+    public void SubscribeToUserTimelineAddUserToFolowersAndSubscribtions()
+    {
+        // 1. Arrange
+        var followerId = _userRepository.AddUser("Alice", "Alice", "Smith", "Alice@smith.com");
+        var targetUserId = _userRepository.AddUser("Bob", "Bob", "Wesson", "Bob@smith.com");
+        
+        // 2. Act
+        _userRepository.SubscribeToUserTimeline(followerId, targetUserId);
+        var follower = _userRepository.GetUserById(followerId);
+        var targetUser = _userRepository.GetUserById(targetUserId);
+        
+        // 3. Assert
+        Assert.That(follower.Subscriptions, Has.Exactly(1).Items);
+        Assert.That(targetUser.Followers, Has.Exactly(1).Items);
+        Assert.That(follower.Subscriptions, Has.Exactly(1).Matches<User>(u=>u.UserId==targetUserId));
+        Assert.That(targetUser.Followers, Has.Exactly(1).Matches<User>(u=>u.UserId==followerId));
     }
 }

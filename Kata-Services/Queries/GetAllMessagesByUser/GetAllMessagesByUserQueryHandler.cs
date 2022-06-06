@@ -8,9 +8,9 @@ namespace Kata_Services.Queries;
 public class GetAllMessagesByUserQueryHandler : IRequestHandler<GetAllMessagesByUserQuery, IEnumerable<GetAllMessagesByUserViewModel>>
 {
     private readonly IMessageRepository _messageRepository;
-    private readonly IMapper _mapper;
+    private readonly IMapper? _mapper;
 
-    public GetAllMessagesByUserQueryHandler(IMessageRepository messageRepository, IMapper mapper)
+    public GetAllMessagesByUserQueryHandler(IMessageRepository messageRepository, IMapper? mapper)
     {
         _messageRepository = messageRepository;
         _mapper = mapper;

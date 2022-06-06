@@ -1,5 +1,6 @@
 ﻿using Kata_Services.Commands.AddMessageToTimeline;
 using Kata_Services.Queries;
+using Kata_Services.Queries.GetFeed;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ public class MessagesController : ControllerBase
     [HttpPost]
     [Route("add")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(int))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    [ProducesErrorResponseType(typeof(string))]
     public async Task<IActionResult> Add(AddMessageViewModel model)
     {
         var result = await _mediator.Send(new AddMessageCommand
@@ -42,5 +43,10 @@ public class MessagesController : ControllerBase
             UserId = id
         });
     }
-    
+
+    [HttpGet]
+    [Route("feed")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetFeedViewModel>))]
+    public async Task<IEnumerable<GetFeedViewModel>> GetUserFeed(int userId) =>
+        await _mediator.Send(new GetFeedQuery { UserId = userId });
 }
