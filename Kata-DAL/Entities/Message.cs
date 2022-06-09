@@ -7,4 +7,6 @@ public class Message
     public DateTime DateTime { get; set; }
     public int AuthorId { get; set; }
     public User Author { get; set; }
+    public IEnumerable<User>? Mentions { get; set; }
+    
 }
