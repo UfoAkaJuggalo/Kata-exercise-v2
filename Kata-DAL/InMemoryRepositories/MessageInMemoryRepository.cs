@@ -16,17 +16,9 @@ public class MessageInMemoryRepository : IMessageRepository
     
     public int AddMessage(string content, User author)
     {
-        var message = new Message
-        {
-            MessageId = ++_idCounter,
-            Content = content,
-            Author = author,
-            AuthorId = author.UserId,
-            DateTime = DateTime.Now
-        };
+        var message = CreateBaseMessage(content, author);
         
-        author.Timeline.Add(message);
-        _messages.Add(message);
+        AddMessageToUserTimeline(message, author);
 
         return message.MessageId;
     }
@@ -36,4 +28,30 @@ public class MessageInMemoryRepository : IMessageRepository
 
     public IEnumerable<Message> GetSortedByMessageIdFeedForUser(User user) =>
         _messages.Where(m => user.Subscriptions.Any(a => a.UserId == m.AuthorId)).OrderByDescending(o=>o.MessageId);
+
+    public int AddMessageWithMentions(string content, User author, IEnumerable<User> mentions)
+    {
+        var message = CreateBaseMessage(content, author);
+        message.Mentions = mentions;
+
+        AddMessageToUserTimeline(message, author);
+
+        return message.MessageId;
+    }
+
+    private Message CreateBaseMessage(string content, User author) =>
+        new Message
+        {
+            MessageId = ++_idCounter,
+            Content = content,
+            Author = author,
+            AuthorId = author.UserId,
+            DateTime = DateTime.Now,
+        };
+
+    private void AddMessageToUserTimeline(Message message, User user)
+    {
+        user.Timeline.Add(message);
+        _messages.Add(message);
+    }
 }
