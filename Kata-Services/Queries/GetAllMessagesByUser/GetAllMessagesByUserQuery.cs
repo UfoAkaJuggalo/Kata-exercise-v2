@@ -1,5 +1,4 @@
-﻿using Kata_DAL.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace Kata_Services.Queries;
 

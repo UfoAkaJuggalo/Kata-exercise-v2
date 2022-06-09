@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Kata_Services.Commands.AddMessageToTimeline;
 using Kata_Services.Commands.AddUser;
 using Kata_Services.Commands.SubscribeTo;
 using Kata_Services.Queries.GetFeed;
 using MediatR;
-using TechTalk.SpecFlow;
 
 namespace BechavioralTestsSpecFlow.Steps
 {
@@ -27,58 +23,55 @@ namespace BechavioralTestsSpecFlow.Steps
             _messageIds = new int[4];
         }
 
-        [Given(@"the first user named ""(.*)""")]
-        public async void GivenTheFirstUserNamedAlice(string name)
+        [Given(@"the first user name is ""([^""]*)""")]
+        public void GivenTheFirstUserNameIs(string alice)
         {
             var model = new AddUserViewModel
             {
-                Name = name,
-                DisplayName = name
+                Name = alice,
+                DisplayName = alice
             };
-        
-            _firstUserId = await _mediator.Send(new AddUserCommand
+
+            _firstUserId = _mediator.Send(new AddUserCommand
             {
                 NewUser = model
-            });
+            }).Result;
         }
 
-        [Given(@"Alice wrote message on her timeline")]
-        public async void GivenAliceWroteMessageOnHerTimeline()
+        [Given(@"the second user name is ""([^""]*)""")]
+        public void GivenTheSecondUserNameIs(string charlie)
+        {
+            var model = new AddUserViewModel
+            {
+                Name = charlie,
+                DisplayName = charlie
+            };
+
+            _secondUserId = _mediator.Send(new AddUserCommand
+            {
+                NewUser = model
+            }).Result;
+        }
+
+        [Given(@"the first user writes messages on her timeline")]
+        public void GivenTheFirstUserWritesMessagesOnHerTimeline()
         {
             var message = new AddMessageViewModel
             {
                 Content = "Alice wrote something",
                 AuthorId = _firstUserId
             };
-            
+
             _messageIds = new int[1];
-            
-            _messageIds[0] = await _mediator.Send(new AddMessageCommand
+
+            _messageIds[0] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message
-            });
-            
+            }).Result;
         }
 
-        
-        [Given(@"the second user named ""(.*)""")]
-        public async void GivenTheSecondUserNamedCharlie(string name)
-        {
-            var model = new AddUserViewModel
-            {
-                Name = name,
-                DisplayName = name
-            };
-        
-            _secondUserId = await _mediator.Send(new AddUserCommand
-            {
-                NewUser = model
-            });
-        }
-
-        [When(@"the second user subscribes to the first user")]
-        public void WhenTheSecondUserSubscribesToTheFirstUser()
-        {
+        [When(@"The second user subscribes to the first user")]
+        public void WhenTheSecondUserSubscribesToTheFirstUser() =>
             _mediator.Send(new SubscribeToCommand
             {
                 Model = new SubscribeToViewModel
@@ -87,37 +80,36 @@ namespace BechavioralTestsSpecFlow.Steps
                     TargetUserId = _firstUserId
                 }
             });
-        }
 
-        [Then(@"he can get messages from the first user timeline")]
-        public async Task ThenHeCanGetMessagesFromTheFirstUserTimeline()
+        [Then(@"the second user can get messages from the first user timeline")]
+        public void ThenTheSecondUserCanGetMessagesFromTheFirstUserTimeline()
         {
-            var result = await _mediator.Send(new GetFeedQuery
+            var result = _mediator.Send(new GetFeedQuery
             {
                 UserId = _secondUserId
-            });
+            }).Result;
 
             result.Should().HaveCount(1);
             result.Should().Satisfy(x => x.Author.UserId == _firstUserId);
         }
 
-        [Given(@"the third user named ""(.*)""")]
-        public async void GivenTheThirdUserNamedBob(string name)
+        [Given(@"the third user name is ""([^""]*)""")]
+        public void GivenTheThirdUserNameIs(string bob)
         {
             var model = new AddUserViewModel
             {
-                Name = name,
-                DisplayName = name
+                Name = bob,
+                DisplayName = bob
             };
-        
-            _thirdUserId = await _mediator.Send(new AddUserCommand
+
+            _thirdUserId = _mediator.Send(new AddUserCommand
             {
                 NewUser = model
-            });
+            }).Result;
         }
 
-        [Given(@"the first user adds two messages")]
-        public async void GivenTheFirstUserAddsTwoMessages()
+        [Given(@"The first user adds two messages")]
+        public void GivenTheFirstUserAddsTwoMessages()
         {
             var message1 = new AddMessageViewModel
             {
@@ -129,20 +121,20 @@ namespace BechavioralTestsSpecFlow.Steps
                 Content = "The second message by the first user",
                 AuthorId = _firstUserId
             };
-            _messageIds = new int[2];
-            
-            _messageIds[0] = await _mediator.Send(new AddMessageCommand
+            _messageIds = new int[4];
+
+            _messageIds[0] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message1
-            });
-            _messageIds[1] = await _mediator.Send(new AddMessageCommand
+            }).Result;
+            _messageIds[1] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message2
-            });
+            }).Result;
         }
 
-        [Given(@"the third user adds two messages")]
-        public async void GivenTheThirdUserAddsTwoMessages()
+        [Given(@"The third user adds two messages")]
+        public void GivenTheThirdUserAddsTwoMessages()
         {
             var message1 = new AddMessageViewModel
             {
@@ -154,19 +146,18 @@ namespace BechavioralTestsSpecFlow.Steps
                 Content = "The second message by the third user",
                 AuthorId = _thirdUserId
             };
-            _messageIds = new int[2];
-            
-            _messageIds[2] = await _mediator.Send(new AddMessageCommand
+
+            _messageIds[2] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message1
-            });
-            _messageIds[3] = await _mediator.Send(new AddMessageCommand
+            }).Result;
+            _messageIds[3] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message2
-            });
+            }).Result;
         }
 
-        [Given(@"the second user subscribes to the both users")]
+        [Given(@"The second user subscribes to the both users")]
         public void GivenTheSecondUserSubscribesToTheBothUsers()
         {
             _mediator.Send(new SubscribeToCommand
@@ -177,7 +168,7 @@ namespace BechavioralTestsSpecFlow.Steps
                     TargetUserId = _firstUserId
                 }
             });
-            
+
             _mediator.Send(new SubscribeToCommand
             {
                 Model = new SubscribeToViewModel
@@ -188,22 +179,20 @@ namespace BechavioralTestsSpecFlow.Steps
             });
         }
 
-        [When(@"the second users try to get his news feed")]
-        public async Task WhenTheSecondUsersTryToGetHisNewsFeed()
-        {
-            _feed = await _mediator.Send(new GetFeedQuery
+        [When(@"the second user try to get his news feed")]
+        public void WhenTheSecondUserTryToGetHisNewsFeed() =>
+            _feed = _mediator.Send(new GetFeedQuery
             {
                 UserId = _secondUserId
-            });
-        }
+            }).Result;
 
-        [Then(@"he get list of combined messages from his subscriptions")]
-        public void ThenHeGetListOfCombinedMessagesFromHisSubscriptions()
+        [Then(@"he get list of combined messages from both users")]
+        public void ThenHeGetListOfCombinedMessagesFromBothUsers()
         {
             _feed.Should().NotBeEmpty();
             _feed.Should().HaveCount(4);
-            _feed.Should().HaveCount(2).And.Satisfy(x => x.Author.UserId == _firstUserId);
-            _feed.Should().HaveCount(2).And.Satisfy(x => x.Author.UserId == _thirdUserId);
+            _feed.Where(w => w.Author.UserId == _firstUserId).Should().HaveCount(2);
+            _feed.Where(w => w.Author.UserId == _thirdUserId).Should().HaveCount(2);
         }
     }
 }

@@ -7,4 +7,5 @@ public interface IMessageRepository
     int AddMessage(string content, User author);
     IEnumerable<Message> GetAllMessagesByUserId(int userId);
     IEnumerable<Message> GetSortedByMessageIdFeedForUser(User user);
+    int AddMessageWithMentions(string content, User author, IEnumerable<User>? mentions);
 }

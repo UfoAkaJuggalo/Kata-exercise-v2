@@ -1,7 +1,6 @@
 ﻿using Kata_DAL.IRepositories;
 using Kata_Services.Commands.AddMessageToTimeline;
 using Moq;
-using NUnit.Framework;
 
 namespace Unit_Tests_Kata_Services.CommandsTests;
 

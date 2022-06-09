@@ -13,5 +13,6 @@ public class AutoMapperProfile : Profile
         CreateMap<Message, GetAllMessagesByUserViewModel>();
         CreateMap<Message, GetFeedViewModel>();
         CreateMap<User, UserInfoViewModel>();
+        CreateMap<UserInfoMentionsViewModel, User>();
     }
 }

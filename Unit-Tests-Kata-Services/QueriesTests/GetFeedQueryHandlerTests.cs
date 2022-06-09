@@ -74,7 +74,8 @@ public class GetFeedQueryHandlerTests
                 AuthorId = 1,
                 Content = "test1 two",
                 DateTime = DateTime.Now,
-                Author = author1
+                Author = author1,
+                Mentions = new List<User>{user, author2}
             },
             new Message
             {
@@ -82,7 +83,8 @@ public class GetFeedQueryHandlerTests
                 AuthorId = 2,
                 Content = "test2 two",
                 DateTime = DateTime.Now,
-                Author = author2
+                Author = author2,
+                Mentions = new List<User> {author1}
             }
         };
 
@@ -130,5 +132,32 @@ public class GetFeedQueryHandlerTests
         
         // 3. Assert
         Assert.That(result, Has.Exactly(4).Items);
+    }
+
+    [Test]
+    public async Task ReturnedListHasFourElementsAndTwoAuthors()
+    {
+        // 1. Arrange
+        // 2. Act
+        var result = await _queryHandler.Handle(_query, CancellationToken.None);
+        var authors = result.Select(x => x.Author.UserId).Distinct();
+
+        // 3. Assert
+        Assert.That(result, Has.Exactly(4).Items);
+        Assert.That(authors.Count(), Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task ReturnedListHasMessagesWithMentions()
+    {
+        // 1. Arrange
+        // 2. Act
+        var result = await _queryHandler.Handle(_query, CancellationToken.None);
+
+        // 3. Assert
+        Assert.That(result, Has.Exactly(1).Matches<GetFeedViewModel>(m => m.Mentions.Count() == 1));
+        Assert.That(result, Has.Exactly(1).Matches<GetFeedViewModel>(m => m.Mentions.Count() == 2));
+        Assert.That(result, Has.Exactly(1).Matches<GetFeedViewModel>(m => m.Mentions.Any(a => a.DisplayName == "Alice")));
+
     }
 }

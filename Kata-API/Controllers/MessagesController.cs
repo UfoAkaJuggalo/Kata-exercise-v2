@@ -1,4 +1,5 @@
 ﻿using Kata_Services.Commands.AddMessageToTimeline;
+using Kata_Services.Commands.AddMessageWithMentionsToTimeline;
 using Kata_Services.Queries;
 using Kata_Services.Queries.GetFeed;
 using MediatR;
@@ -24,6 +25,22 @@ public class MessagesController : ControllerBase
     public async Task<IActionResult> Add(AddMessageViewModel model)
     {
         var result = await _mediator.Send(new AddMessageCommand
+        {
+            NewPost = model
+        });
+
+        return result > 0
+            ? StatusCode(StatusCodes.Status201Created, result)
+            : StatusCode(StatusCodes.Status500InternalServerError, "Unable to add a new post");
+    }
+    
+    [HttpPost]
+    [Route("add/v2")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(int))]
+    [ProducesErrorResponseType(typeof(string))]
+    public async Task<IActionResult> AddWithMentions(AddMessageWithMentionsViewModel model)
+    {
+        var result = await _mediator.Send(new AddMessageWithMentionsCommand
         {
             NewPost = model
         });

@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using FluentAssertions;
-using Kata_DAL.Entities;
-using Kata_DAL.IRepositories;
 using Kata_Services.Commands.AddMessageToTimeline;
 using Kata_Services.Commands.AddUser;
+using Kata_Services.Queries;
 using MediatR;
-using TechTalk.SpecFlow;
 
 namespace BechavioralTestsSpecFlow.Steps
 {
@@ -14,50 +10,48 @@ namespace BechavioralTestsSpecFlow.Steps
     public class ReadingStepDefinitions
     {
         private readonly IMediator _mediator;
-        private readonly IMessageRepository _messageRepository;
         private int _writerUserId;
         private int _readerUserId;
-        private IEnumerable<Message> _timeline;
+        private IEnumerable<GetAllMessagesByUserViewModel> _timeline;
         private int[] _messageIds;
 
-        public ReadingStepDefinitions(IMessageRepository messageRepository, IMediator mediator)
+        public ReadingStepDefinitions(IMediator mediator)
         {
-            _messageRepository = messageRepository;
             _mediator = mediator;
         }
 
-        [Given(@"the writer user name is ""(.*)""")]
-        public async void GivenTheWriterUserNameIs(string name)
+        [Given(@"The first user name is ""([^""]*)""")]
+        public void GivenTheFirstUserNameIs(string alice)
         {
             var model = new AddUserViewModel
             {
-                Name = name,
-                DisplayName = name
+                Name = alice,
+                DisplayName = alice
             };
-        
-            _writerUserId = await _mediator.Send(new AddUserCommand
+
+            _writerUserId = _mediator.Send(new AddUserCommand
             {
                 NewUser = model
-            });
+            }).Result;
         }
 
-        [Given(@"the reader user name is ""(.*)""")]
-        public async void GivenTheReaderUserNameIs(string name)
+        [Given(@"The second user name is ""([^""]*)""")]
+        public void GivenTheSecondUserNameIs(string bob)
         {
             var model = new AddUserViewModel
             {
-                Name = name,
-                DisplayName = name
+                Name = bob,
+                DisplayName = bob
             };
-        
-            _readerUserId = await _mediator.Send(new AddUserCommand
+
+            _readerUserId =  _mediator.Send(new AddUserCommand
             {
                 NewUser = model
-            });
+            }).Result;
         }
 
-        [Given(@"Alice write messages on her timeline")]
-        public async void GivenAliceWriteMessagesOnHerTimeline()
+        [Given(@"the first user write messages on her timeline")]
+        public void GivenTheFirstUserWriteMessagesOnHerTimeline()
         {
             var message1 = new AddMessageViewModel
             {
@@ -70,31 +64,32 @@ namespace BechavioralTestsSpecFlow.Steps
                 AuthorId = _writerUserId
             };
             _messageIds = new int[2];
-            
-            _messageIds[0] = await _mediator.Send(new AddMessageCommand
+
+            _messageIds[0] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message1
-            });
-            _messageIds[1] = await _mediator.Send(new AddMessageCommand
+            }).Result;
+            _messageIds[1] = _mediator.Send(new AddMessageCommand
             {
                 NewPost = message2
-            });
+            }).Result;
         }
 
-        [When(@"Bob wants to see Alice timeline")]
-        public void WhenBobWantsToSeeAliceTimeline()
-        {
-            _timeline = _messageRepository.GetAllMessagesByUserId(_writerUserId);
-        }
+        [When(@"the second user wants to see Alice timeline")]
+        public void WhenTheSecondUserWantsToSeeAliceTimeline() =>
+            _timeline = _mediator.Send(new GetAllMessagesByUserQuery
+            {
+                UserId = _writerUserId
+            }).Result;
 
-        [Then(@"he gets all messages from Alice timeline")]
-        public void ThenHeGetsAllMessagesFromAliceTimeline()
+        [Then(@"he gets all messages from the first user timeline")]
+        public void ThenHeGetsAllMessagesFromTheFirstUserTimeline()
         {
             _timeline.Should().NotBeNullOrEmpty();
             _timeline.Should().HaveCount(2);
-            _timeline.Should().Satisfy(x => x.AuthorId == _writerUserId && x.Content == "The first message");
-            _timeline.Should().Satisfy(x => x.AuthorId == _writerUserId && x.Content == "The second message");
-            
+            _timeline.SingleOrDefault(f => f.Content == "The first message").Should().NotBeNull();
+            _timeline.SingleOrDefault(f => f.Content == "The second message").Should().NotBeNull();
         }
+
     }
 }

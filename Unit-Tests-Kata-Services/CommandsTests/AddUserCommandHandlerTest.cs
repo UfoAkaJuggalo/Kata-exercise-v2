@@ -1,8 +1,6 @@
 ﻿using Kata_DAL.IRepositories;
 using Kata_Services.Commands.AddUser;
 using Moq;
-using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Unit_Tests_Kata_Services.CommandsTests;
 
