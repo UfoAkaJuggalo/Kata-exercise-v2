@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FluentAssertions;
-using Kata_DAL.Entities;
+﻿using FluentAssertions;
 using Kata_DAL.IRepositories;
 using Kata_Services.Commands.AddMessageToTimeline;
 using Kata_Services.Commands.AddUser;
 using MediatR;
-using TechTalk.SpecFlow;
 
-namespace BechavioralTestsSpecFlow.Steps;
+namespace BechavioralTestsSpecFlow;
 
 [Binding]
 public sealed class PostingStepDefinitions
@@ -23,36 +17,35 @@ public sealed class PostingStepDefinitions
     private int _messageId;
     private string _messageText;
 
-
-    public PostingStepDefinitions(IMediator mediator, IUserRepository userRepository)
+    public PostingStepDefinitions(IUserRepository userRepository, IMediator mediator)
     {
-        _mediator = mediator;
         _userRepository = userRepository;
+        _mediator = mediator;
     }
 
-    [Given(@"User named ""(.*)""")]
-    public async Task GivenUserNamed(string name)
+    [Given(@"the user name is ""([^""]*)""")]
+    public void GivenTheUserNameIs(string alice)
     {
         var model = new AddUserViewModel
         {
-            Name = name,
-            DisplayName = name
+            Name = alice,
+            DisplayName = alice
         };
-        
-        _userId = await _mediator.Send(new AddUserCommand
+
+        _userId = _mediator.Send(new AddUserCommand
         {
             NewUser = model
-        });
+        }).Result;
     }
 
-    [Given(@"the message with text ""(.*)""")]
-    public void GivenTheMessageWithText(string message)
+    [Given(@"message with text ""([^""]*)""")]
+    public void GivenMessageWithText(string p0)
     {
-        _messageText = message;
+        _messageText = p0;
     }
 
-    [When(@"Alice publish the message")]
-    public async Task WhenAlicePublishTheMessage()
+    [When(@"user publish the message")]
+    public void WhenUserPublishTheMessage()
     {
         var model = new AddMessageViewModel
         {
@@ -60,14 +53,14 @@ public sealed class PostingStepDefinitions
             AuthorId = _userId
         };
         ;
-        _messageId = await _mediator.Send(new AddMessageCommand
+        _messageId = _mediator.Send(new AddMessageCommand
         {
             NewPost = model
-        });
+        }).Result;
     }
 
-    [Then(@"the message should be added to Alice timeline")]
-    public void ThenTheMessageShouldBeAddedToAliceTimeline()
+    [Then(@"message should be added to Alice timeline")]
+    public void ThenMessageShouldBeAddedToAliceTimeline()
     {
         var user = _userRepository.GetUserById(_userId);
         var messageFromTimeline = user.Timeline.FirstOrDefault(x => x.MessageId == _messageId);
@@ -75,4 +68,5 @@ public sealed class PostingStepDefinitions
         messageFromTimeline.Should().NotBeNull();
         messageFromTimeline?.Content.Should().BeSameAs(_messageText);
     }
+
 }
