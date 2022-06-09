@@ -4,7 +4,6 @@ using Kata_DAL.IRepositories;
 using Kata_Services.Infrastructure;
 using Kata_Services.Queries;
 using Moq;
-using NUnit.Framework;
 
 namespace Unit_Tests_Kata_Services.QueriesTests;
 

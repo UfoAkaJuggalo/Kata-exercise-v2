@@ -1,7 +1,6 @@
 ﻿using Kata_DAL.Entities;
 using Kata_DAL.InMemoryRepositories;
 using Kata_DAL.IRepositories;
-using NUnit.Framework;
 
 namespace Unit_Tests_Kata_Services.RepositoryTest;
 
