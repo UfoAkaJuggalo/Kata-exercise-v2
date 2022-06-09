@@ -34,14 +34,16 @@ public class GetFeedQueryHandler : IRequestHandler<GetFeedQuery, IEnumerable<Get
         }
         
         var feed = _messageRepository.GetSortedByMessageIdFeedForUser(user);
-        
+
         foreach (var item in feed)
         {
             var message = _mapper.Map<GetFeedViewModel>(item);
             var author = _mapper.Map<UserInfoViewModel>(item.Author);
-            
+            var mentions = _mapper.Map<IEnumerable<UserInfoViewModel>>(item.Mentions);
+
             message.Author = author;
-            
+            message.Mentions = mentions;
+
             result.Add(message);
         }
 

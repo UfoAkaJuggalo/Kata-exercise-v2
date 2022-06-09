@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Kata_DAL.Entities;
 using Kata_DAL.IRepositories;
 using MediatR;
 
@@ -8,7 +7,7 @@ namespace Kata_Services.Queries;
 public class GetAllMessagesByUserQueryHandler : IRequestHandler<GetAllMessagesByUserQuery, IEnumerable<GetAllMessagesByUserViewModel>>
 {
     private readonly IMessageRepository _messageRepository;
-    private readonly IMapper? _mapper;
+    private readonly IMapper _mapper;
 
     public GetAllMessagesByUserQueryHandler(IMessageRepository messageRepository, IMapper? mapper)
     {

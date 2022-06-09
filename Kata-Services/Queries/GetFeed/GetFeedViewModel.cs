@@ -8,4 +8,5 @@ public class GetFeedViewModel
     public string Content { get; set; }
     public DateTime DateTime { get; set; }
     public UserInfoViewModel Author { get; set; }
+    public IEnumerable<UserInfoViewModel>? Mentions { get; set; }
 }
