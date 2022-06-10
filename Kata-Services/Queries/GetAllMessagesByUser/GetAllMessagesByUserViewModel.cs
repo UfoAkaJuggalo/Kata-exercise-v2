@@ -8,4 +8,5 @@ public class GetAllMessagesByUserViewModel
     public string Content { get; set; }
     public DateTime DateTime { get; set; }
     public IEnumerable<UserInfoViewModel>? Mentions { get; set; }
+    public IEnumerable<LinksViewModel>? Links { get; set; }
 }
