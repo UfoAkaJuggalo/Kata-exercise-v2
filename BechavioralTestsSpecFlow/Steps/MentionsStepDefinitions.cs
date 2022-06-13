@@ -87,7 +87,7 @@ namespace BechavioralTestsSpecFlow.Steps
             timeline.Should().NotBeNull();
             message.Should().NotBeNull();
             message.Mentions.Should().NotBeNull();
-            message.Mentions.FirstOrDefault(f => f.DisplayName == _secondUser.DisplayName).Should().NotBeNull();
+            message.Mentions.SingleOrDefault(f => f.DisplayName == _secondUser.DisplayName).Should().NotBeNull();
         }
     }
 }
